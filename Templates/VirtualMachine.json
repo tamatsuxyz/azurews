@@ -212,7 +212,7 @@
       "sku": {
         "name": "Aligned"
       }
-    },
+    }/*,
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('virtualMachineName'), '/SetupWebServer')]",
@@ -231,6 +231,6 @@
           "ConfigurationFunction": "SetupWebServer.ps1\\SetupWebServer"
         }
       }
-    }
+    }*/
   ]
 }
