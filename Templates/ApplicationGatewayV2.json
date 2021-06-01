@@ -138,7 +138,7 @@
                 "id": "[concat(variables('applicationGatewayId'), '/httpListeners/httpVm')]" //
               },
               "backendAddressPool": {
-                "id": "[concat(variables('applicationGatewayId'), '/backendAddressPools/vm')]"
+                "id": "[concat(variables('applicationGatewayId'), '/backendAddressPools/empty')]"
               },
               "backendHttpSettings": {
                 "id": "[concat(variables('applicationGatewayId'), '/backendHttpSettingsCollection/', 'http')]"

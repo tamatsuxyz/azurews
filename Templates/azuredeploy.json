@@ -4,7 +4,7 @@
     "parameters": {
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://github.com/tamatsuxyz/azurews/tree/main/Templates"
+            "defaultValue": "https://raw.githubusercontent.com/tamatsuxyz/azurews/main/Templates/"
         },
         "secondaryRegion": {
             "type": "string",
@@ -32,9 +32,7 @@
                 "enableAcceleratedNetworking": false,
                 "location": "[variables('location')]",
                 "availabilitySetName": "avsWebVM",
-                "zones":[
-                    2
-                ]
+                "zones":[]
             },
             {
                 "virtualMachineName": "WebVM11",
@@ -117,7 +115,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualNetwork.json')]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/VirtualNetwork.json')]"
                 },
                 "parameters": {
                     "virtualNetworkName": { "value": "jpevnet" },
@@ -147,7 +145,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualNetwork.json')]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/VirtualNetwork.json')]"
                 },
                 "parameters": {
                     "virtualNetworkName": { "value": "jpwvnet" },
@@ -173,7 +171,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/ApplicationGatewayV2.json')]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/ApplicationGatewayV2.json')]"
                 },
                 "parameters": {
                     "applicationGatewayName": {
@@ -190,9 +188,6 @@
                     },
                     "zones": {
                         "value": []
-                    },
-                    "sslCertificates": {
-                        "value": "[variables('ApplicationGateway').sslCertificates]"
                     }
                 }
             }
@@ -211,7 +206,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualMachine.json')]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/VirtualMachine.json')]"
                 },
                 "parameters": {
                     "virtualMachineName": {
@@ -257,7 +252,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/FrontDoor.json')]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/FrontDoor.json')]"
                 },
                 "parameters": {
                     "resourceName": {
