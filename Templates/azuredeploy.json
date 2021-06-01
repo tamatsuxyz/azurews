@@ -3,42 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "_artifactsLocation": {
-            "type": "string"
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "defaultValue": ""
-        },
-        "DeployAppGWv2": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "DeployVM": {
             "type": "string",
-            "allowedValues": [
-                "false",
-                "Main VNet",
-                "Main VNet/Windows",
-                "Main VNet/Linux",
-                "Main region",
-                "Main/Secondary regions",
-                "SQL Database region",
-                "All region",
-                "VWAN Perf"
-            ],
-            "defaultValue": "false"
-        },
-        "vmDscExtension": {
-            "type": "string",
-            "allowedValues": [
-                "false",
-                "EnableIIS"
-            ],
-            "defaultValue": "false"
-        },
-        "DeployFrontDoor": {
-            "type": "bool",
-            "defaultValue": false
+            "defaultValue": "https://github.com/tamatsuxyz/azurews/tree/main/Templates"
         },
         "virtualMachineSize": {
             "type": "string",
@@ -60,22 +26,26 @@
         "location": "[resourceGroup().location]",
         "VirtualMachine": [
             {
-                "virtualMachineName": "ws2019s11",
-                "VNetName": "spoke11",
-                "SubnetName": "vm",
-                "enableGen2": true,
+                "virtualMachineName": "WebVM02",
+                "VNetName": "jpevnet",
+                "SubnetName": "default",
+                "enableGen2": false,
                 "enableAcceleratedNetworking": false,
-                "location": "[resourceGroup().location]",
-                "availabilitySetName": "avs-web",
-                "zones":[],
-                "deployProfile": [
-                    "Main VNet/Windows",
-                    "Main VNet",
-                    "Main region",
-                    "Main/Secondary regions",
-                    "SQL Database region",
-                    "All region"
+                "location": "[variables('location')]",
+                "availabilitySetName": "avsWebVM",
+                "zones":[
+                    2
                 ]
+            },
+            {
+                "virtualMachineName": "WebVM11",
+                "VNetName": "jpwvnet",
+                "SubnetName": "default",
+                "enableGen2": false,
+                "enableAcceleratedNetworking": false,
+                "location": "[parameters('secondaryRegion')]",
+                "availabilitySetName": "false",
+                "zones":[]
             }
         ],
         "FrontDoor": {
@@ -123,102 +93,92 @@
         },
         "ipAddress": {
             "virtualNetwork": {
-                "vnet00": {
-                    "virtualNetwork": "10.1.0.0/16",
-                    "vm": "10.1.0.0/24",
-                    "nva": "10.1.1.0/24",
-                    "AzureFirewallSubnet": "10.1.2.0/24",
-                    "AzureBastionSubnet": "10.1.3.0/24",
-                    "Management": "10.1.4.0/24",
-                    "GatewaySubnet": "10.1.255.0/24",
-                    "vpnClientAddressPrefixes": [
-                        "10.0.101.0/24"
-                    ]
+                "jpevnet": {
+                    "virtualNetwork": "10.0.0.0/16",
+                    "web": "10.0.0.0/24",
+                    "ApplicationGateway": "10.0.1.0/24",
+                    //"AzureFirewallSubnet": "10.0.2.0/24",
+                    //"AzureBastionSubnet": "10.0.3.0/24"
                 },
-                "VNet-secRegion": {
+                "jpwvnet": {
                     "virtualNetwork": "10.2.0.0/16",
-                    "vm": "10.2.0.0/24",
-                    "nva": "10.2.1.0/24"
+                    "web": "10.2.0.0/24"
                 }
             },
             "resource": {
-                "ApplicationGatewayV2": "10.11.2.4"
+                "ApplicationGatewayV2": "10.0.1.100"
             }
         }        
     },
     "resources": [
         {
             "apiVersion": "2020-06-01",
-            "name": "linked-VNet-vnet00",
+            "name": "linked-VNet-jpevnet",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualNetwork.json', parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualNetwork.json')]"
                 },
                 "parameters": {
-                    "virtualNetworkName": { "value": "vnet00" },
-                    "addressPrefixes": { "value": [ "[variables('ipAddress').virtualNetwork.vnet00.virtualNetwork]" ] },
+                    "virtualNetworkName": { "value": "jpevnet" },
+                    "addressPrefixes": { "value": [ "[variables('ipAddress').virtualNetwork.jpevnet.virtualNetwork]" ] },
                     "subnets": {
                         "value": [
                             {
-                                "name": "vm",
-                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.vnet00.vm]" }
+                                "name": "web",
+                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.jpevnet.web]" }
                             },
                             {
-                                "name": "GatewaySubnet",
-                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.vnet00.GatewaySubnet]" }
+                                "name": "ApplicationGateway",
+                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.jpevnet.ApplicationGateway]" }
                             }
                         ]
                     },
                     "location": {
-                        "value": "[resourceGroup().location]"
+                        "value": "[variables('location')]"
                     }
                 }
             }
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "linked-VNet-secRegion",
+            "name": "linked-jpwvnet",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualNetwork.json', parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualNetwork.json')]"
                 },
                 "parameters": {
-                    "virtualNetworkName": { "value": "VNet-secRegion" },
-                    "addressPrefixes": { "value": [ "[variables('ipAddress').virtualNetwork.vnet00.virtualNetwork]" ] },
+                    "virtualNetworkName": { "value": "jpwvnet" },
+                    "addressPrefixes": { "value": [ "[variables('ipAddress').virtualNetwork.jpevnet.virtualNetwork]" ] },
                     "subnets": {
                         "value": [
                             {
-                                "name": "vm",
-                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.vnet00.vm]" }
+                                "name": "web",
+                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.jpevnet.web]" }
                             }
                         ]
                     },
                     "location": {
-                        "value": "[resourceGroup().location]"
+                        "value": "[parameters('secondaryRegion')]"
                     }
                 }
             }
         },
         {
-            "condition": "[parameters('DeployAppGWv2')]",
             "apiVersion": "2020-06-01",
-            "name": "linked-AppGWv2",
+            "name": "linked-ApplicationGateway",
             "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "linked-VNet-spoke11"
-            ],
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/ApplicationGatewayV2.json', parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/ApplicationGatewayV2.json')]"
                 },
                 "parameters": {
                     "applicationGatewayName": {
-                        "value": "appgwv2"
+                        "value": "AppGW"
                     },
                     "skuSize": {
                         "value": "WAF_v2"
@@ -227,7 +187,7 @@
                         "value": "[variables('ipAddress').resource.ApplicationGatewayV2]"
                     },
                     "subnetRef": {
-                        "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'spoke11'), '/subnets/AppGWv2')]"
+                        "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'jpevnet'), '/subnets/ApplicationGateway')]"
                     },
                     "zones": {
                         "value": []
@@ -239,7 +199,6 @@
             }
         },
         {
-            "condition": "[contains(variables('VirtualMachine')[copyIndex()].deployProfile, parameters('deployVM'))]",
             "apiVersion": "2020-06-01",
             "name": "[concat('linked-VM-', variables('VirtualMachine')[copyIndex()].virtualMachineName)]",
             "type": "Microsoft.Resources/deployments",
@@ -248,13 +207,12 @@
                 "count": "[length(variables('VirtualMachine'))]"
             },
             "dependsOn": [
-                "[concat('linked-VNet-', variables('VirtualMachine')[copyIndex()].VNetName)]",
-                "linked-AppGWv2"
+                "[concat('linked-VNet-', variables('VirtualMachine')[copyIndex()].VNetName)]"
             ],
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualMachine.json', parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/VirtualMachine.json')]"
                 },
                 "parameters": {
                     "virtualMachineName": {
@@ -281,12 +239,6 @@
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
-                    "_artifactsLocationSasToken": {
-                        "value": "[parameters('_artifactsLocationSasToken')]"
-                    },
-                    "vmDscExtension": {
-                        "value": "[parameters('vmDscExtension')]"
-                    },
                     "location": {
                         "value": "[variables('VirtualMachine')[copyIndex()].location]"
                     },
@@ -300,14 +252,13 @@
             }
         },
         {
-            "condition": "[parameters('DeployFrontDoor')]",
             "apiVersion": "2020-06-01",
             "name": "linked-FrontDoor",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/FrontDoor.json', parameters('_artifactsLocationSasToken'))]"
+                    "uri": "[concat(parameters('_artifactsLocation'), '/armtemplates/FrontDoor.json')]"
                 },
                 "parameters": {
                     "resourceName": {

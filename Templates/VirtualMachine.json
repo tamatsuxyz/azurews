@@ -20,12 +20,6 @@
     "_artifactsLocation": {
       "type": "string"
     },
-    "_artifactsLocationSasToken": {
-      "type": "string"
-    },
-    "vmDscExtension": {
-      "type": "string"
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]"
@@ -220,7 +214,6 @@
       }
     },
     {
-      "condition": "[equals (parameters('vmDscExtension'), 'EnableIIS')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('virtualMachineName'), '/SetupWebServer')]",
       "apiVersion": "2019-07-01",
@@ -234,7 +227,7 @@
         "typeHandlerVersion": "2.19",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('dsc/SetupWebServer.zip', parameters('_artifactsLocationSasToken')))]",
+          "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('dsc/SetupWebServer.zip'))]",
           "ConfigurationFunction": "SetupWebServer.ps1\\SetupWebServer"
         }
       }
