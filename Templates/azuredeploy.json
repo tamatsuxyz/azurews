@@ -6,20 +6,19 @@
             "type": "string",
             "defaultValue": "https://github.com/tamatsuxyz/azurews/tree/main/Templates"
         },
-        "virtualMachineSize": {
+        "secondaryRegion": {
             "type": "string",
-            "defaultValue": "Standard_DS1_v2"
+            "defaultValue": "japanwest"
         },
         "adminUsername": {
-            "type": "string",
-            "defaultValue": "azuser"
+            "type": "string"
         },
         "adminPassword": {
             "type": "securestring"
         },
-        "secondaryRegion": {
+        "virtualMachineSize": {
             "type": "string",
-            "defaultValue": "japanwest"
+            "defaultValue": "Standard_DS1_v2"
         }
     },
     "variables": {
@@ -96,7 +95,7 @@
                 "jpevnet": {
                     "virtualNetwork": "10.0.0.0/16",
                     "web": "10.0.0.0/24",
-                    "ApplicationGateway": "10.0.1.0/24",
+                    "ApplicationGateway": "10.0.1.0/24"
                     //"AzureFirewallSubnet": "10.0.2.0/24",
                     //"AzureBastionSubnet": "10.0.3.0/24"
                 },
@@ -143,7 +142,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "linked-jpwvnet",
+            "name": "linked-VNet-jpwvnet",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "incremental",
