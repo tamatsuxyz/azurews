@@ -1,0 +1,243 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachineName": {
+      "type": "string"
+    },
+    "virtualMachineSize": {
+      "type": "string"
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "secureString"
+    },
+    "subnetRef": {
+      "type": "string"
+    },
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "string"
+    },
+    "vmDscExtension": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "enableAcceleratedNetworking": {
+      "type": "bool"
+    },
+    "availabilitySetName":{
+      "type": "string",
+      "defaultValue": "false"
+    },
+    "zones":{
+      "type": "array",
+      "defaultValue": []
+    },
+    "enableGen2": {
+      "type": "bool",
+      "defaultValue": false
+    }
+  },
+  "variables": {
+    "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
+    "networkInterfaceName": "[concat(parameters('virtualMachineName'), substring(uniqueString(resourceGroup().id), 0, 3))]",
+    "networkSecurityGroupRules": [
+      {
+        "name": "HTTP",
+        "properties": {
+          "priority": 400,
+          "protocol": "TCP",
+          "access": "Allow",
+          "direction": "Inbound",
+          "sourceAddressPrefix": "*",
+          "sourcePortRange": "*",
+          "destinationAddressPrefix": "*",
+          "destinationPortRanges": [
+            "80",
+            "443"
+          ],
+          "sourcePortRanges": [],
+          "sourceAddressPrefixes": [],
+          "destinationAddressPrefixes": []
+        }
+      }
+    ],
+    "virtualMachineComputerName": "[parameters('virtualMachineName')]",
+    "osDiskType": "Standard_LRS",
+    "publicIpAddressName": "[concat(parameters('virtualMachineName'), '-ip')]",
+    "publicIpAddressSku": "[if(greater(length(parameters('zones')),0), 'Standard', 'Basic')]",
+    "publicIpAddressType": "[if(greater(length(parameters('zones')),0), 'Static', 'Dynamic')]",
+    "networkSecurityGroupName": "[concat(parameters('virtualMachineName'), '-nsg')]",
+    "availabilitySetObject": {
+      "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+    },
+    "availabilitySet": "[if( not(equals(parameters('availabilitySetName'), 'false')), variables('availabilitySetObject'), '' )]",
+    "availabilitySetplatformFaultDomainCount": 2,
+    "availabilitySetPlatformUpdateDomainCount": 20,
+    "priority": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', 'Spot' )]",
+    "evictionPolicy": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', 'Deallocate' )]",
+    "billingProfile": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', variables('billingProfileObject'))]",
+    "billingProfileObject": {
+      "maxPrice": -1
+    },
+    "imageSku": "[if(parameters('enableGen2'), '2019-Datacenter-gensecond', '2019-Datacenter')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('networkInterfaceName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-04-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
+        "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
+      ],
+      "properties": {
+        "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "subnet": {
+                "id": "[parameters('subnetRef')]"
+              },
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[variables('nsgId')]"
+        }
+      }
+    },
+    {
+      "name": "[variables('networkSecurityGroupName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-04-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": "[variables('networkSecurityGroupRules')]"
+      }
+    },
+    {
+      "name": "[variables('publicIpAddressName')]",
+      "type": "Microsoft.Network/publicIpAddresses",
+      "apiVersion": "2020-04-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publicIpAllocationMethod": "[variables('publicIpAddressType')]",
+        "dnsSettings": {
+          "domainNameLabel": "[toLower(concat(parameters('virtualMachineName'), substring(uniqueString(resourceGroup().id), 0, 3)))]"
+        }
+      },
+      "sku": {
+        "name": "[variables('publicIpAddressSku')]"
+      },
+      "zones": "[parameters('zones')]"
+    },
+    {
+      "name": "[parameters('virtualMachineName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-07-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+      ],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "osDisk": {
+            "createOption": "fromImage",
+            "managedDisk": {
+              "storageAccountType": "[variables('osDiskType')]"
+            }
+          },
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[variables('imageSku')]",
+            "version": "latest"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+            }
+          ]
+        },
+        "osProfile": {
+          "computerName": "[variables('virtualMachineComputerName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": true,
+            "provisionVmAgent": true
+          }
+        },
+        "licenseType": "Windows_Server",
+        "priority": "[variables('priority')]",
+        "evictionPolicy": "[variables('evictionPolicy')]",
+        "billingProfile": "[variables('billingProfile')]",
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": false
+          }
+        },
+        "availabilitySet": "[variables('availabilitySet')]"
+      },
+      "zones": "[parameters('zones')]"
+    },
+    {
+      "condition": "[not(equals(parameters('availabilitySetName'), 'false'))]",
+      "name": "[parameters('availabilitySetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "apiVersion": "2019-07-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "platformFaultDomainCount": "[variables('availabilitySetPlatformFaultDomainCount')]",
+        "platformUpdateDomainCount": "[variables('availabilitySetPlatformUpdateDomainCount')]"
+      },
+      "sku": {
+        "name": "Aligned"
+      }
+    },
+    {
+      "condition": "[equals (parameters('vmDscExtension'), 'EnableIIS')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'), '/SetupWebServer')]",
+      "apiVersion": "2019-07-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[parameters('virtualMachineName')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.19",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "ModulesUrl": "[uri(parameters('_artifactsLocation'), concat('dsc/SetupWebServer.zip', parameters('_artifactsLocationSasToken')))]",
+          "ConfigurationFunction": "SetupWebServer.ps1\\SetupWebServer"
+        }
+      }
+    }
+  ]
+}
