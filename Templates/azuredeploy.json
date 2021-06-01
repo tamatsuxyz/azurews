@@ -27,7 +27,7 @@
             {
                 "virtualMachineName": "WebVM02",
                 "VNetName": "jpevnet",
-                "SubnetName": "default",
+                "SubnetName": "web",
                 "enableGen2": false,
                 "enableAcceleratedNetworking": false,
                 "location": "[variables('location')]",
@@ -37,7 +37,7 @@
             {
                 "virtualMachineName": "WebVM11",
                 "VNetName": "jpwvnet",
-                "SubnetName": "default",
+                "SubnetName": "web",
                 "enableGen2": false,
                 "enableAcceleratedNetworking": false,
                 "location": "[parameters('secondaryRegion')]",
@@ -168,6 +168,9 @@
             "apiVersion": "2020-06-01",
             "name": "linked-ApplicationGateway",
             "type": "Microsoft.Resources/deployments",
+            "dependsOn":[
+                "linked-VNet-jpevnet"
+            ],
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
