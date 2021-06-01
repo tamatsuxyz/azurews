@@ -135,6 +135,8 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 
 1. 以下の [**Deploy to Azure**] ボタンをクリックして、Azure ポータルを開き、Contoso アプリケーションの高可用性に必要となる、追加のインフラストラクチャを コンポーネントのテンプレート デプロイを起動します。プロンプトが表示された場合は、サブスクリプションの資格情報を使用して Azure ポータルにログインします。
 
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2tamatsuxyz%2azurews%2main%2Templates%2azuredeploy.json)
+
 2. **カスタム デプロイ**画面で、以下の情報を入力します。入力後、[**確認および作成**] ボタンをクリックします。
     * リソース グループ: **Prefix**-azurews (既存）
     * 地域: 東日本
