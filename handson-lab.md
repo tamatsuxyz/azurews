@@ -129,6 +129,7 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 6. 以下の URL より PostgreSQL クライアントをダウンロードしてインストールします。
 
 　　※ Server Manager で IE のセキュリティ強化機能を事前に無効化が必要です。
+
 https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 
     ※ **Select Components** の画面では、Command Line Tools のみを選択して進めます。
