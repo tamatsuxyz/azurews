@@ -40,7 +40,7 @@ Contoso は、既存のオンプレミスのアプリケーションを Microsof
 東日本リージョンの展開から開始し、セカンダリ リージョンへの拡張を行います。
 
 ---
-＊＊＊＊＊＊図を追加 ＊＊＊＊＊＊＊＊＊＊
+[![SolutionOverview](https://raw.githubusercontent.com/Atamatsuxyz/azurews/blob/main/images/SolutionOverview.png)]
 ---
 
 ## 演習 1: Azure にリソースを展開する
