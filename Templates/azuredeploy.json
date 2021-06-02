@@ -18,7 +18,7 @@
         },
         "virtualMachineSize": {
             "type": "string",
-            "defaultValue": "Standard_DS1_v2"
+            "defaultValue": "Standard_E2s_v3"
         }
     },
     "variables": {
@@ -94,8 +94,6 @@
                     "virtualNetwork": "10.0.0.0/16",
                     "web": "10.0.0.0/24",
                     "ApplicationGateway": "10.0.1.0/24"
-                    //"AzureFirewallSubnet": "10.0.2.0/24",
-                    //"AzureBastionSubnet": "10.0.3.0/24"
                 },
                 "jpwvnet": {
                     "virtualNetwork": "10.2.0.0/16",
@@ -108,36 +106,6 @@
         }        
     },
     "resources": [
-        {
-            "apiVersion": "2020-06-01",
-            "name": "linked-VNet-jpevnet",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/VirtualNetwork.json')]"
-                },
-                "parameters": {
-                    "virtualNetworkName": { "value": "jpevnet" },
-                    "addressPrefixes": { "value": [ "[variables('ipAddress').virtualNetwork.jpevnet.virtualNetwork]" ] },
-                    "subnets": {
-                        "value": [
-                            {
-                                "name": "web",
-                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.jpevnet.web]" }
-                            },
-                            {
-                                "name": "ApplicationGateway",
-                                "properties": { "addressPrefix": "[variables('ipAddress').virtualNetwork.jpevnet.ApplicationGateway]" }
-                            }
-                        ]
-                    },
-                    "location": {
-                        "value": "[variables('location')]"
-                    }
-                }
-            }
-        },
         {
             "apiVersion": "2020-06-01",
             "name": "linked-VNet-jpwvnet",
@@ -168,9 +136,6 @@
             "apiVersion": "2020-06-01",
             "name": "linked-ApplicationGateway",
             "type": "Microsoft.Resources/deployments",
-            "dependsOn":[
-                "linked-VNet-jpevnet"
-            ],
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
@@ -204,7 +169,7 @@
                 "count": "[length(variables('VirtualMachine'))]"
             },
             "dependsOn": [
-                "[concat('linked-VNet-', variables('VirtualMachine')[copyIndex()].VNetName)]"
+                "linked-VNet-jpwvnet"
             ],
             "properties": {
                 "mode": "incremental",

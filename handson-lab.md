@@ -64,20 +64,20 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 
     * サーバー名: **Prefix**-psql
     * 地域: 東日本
-    * 管理者ユーザー名:
     * コンピューティングとストレージ: 汎用目的
 
         ※ **サーバーの構成** をクリックして、以下を指定します。
         * vCore: 2
         * ストレージ 5 GB
         * ストレージの自動拡張: いいえ
+    * 管理者ユーザー名: azlabadmin
     * パスワード/パスワードの確認: (**任意のパスワードを入力**)
 6. [**作成**] ボタンをクリックします。
 7. **デプロイが完了しました** のメッセージが出力されたら [**リソースに移動**] ボタンをクリックします。
 
 
 ## タスク 2: Azure 仮想マシンを作成する
-このタスクでは、Web サーバーとなる Azure 仮想マシン をデプロイします。
+このタスクでは、Web サーバー用の Azure 仮想マシンをデプロイします。
 
 1. [**＋リソースの作成**] をクリックします。
 2. [**Windows Server 2019 Datacenter**] をクリックします。
@@ -86,33 +86,41 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 
         ※ タスク1 で作成したリソース グループ名を選択します。
 
-    * 仮想マシン名: WebVM00
+    * 仮想マシン名: WebVM01
     * 地域: 東日本
-    * ユーザー名:
+    * 可用性オプション: 可用性ゾーン
+    * 可用性ゾーン: 1
+    * サイズ: Standard_E2s_v3
+    * ユーザー名: azlabadmin
     * パスワード/パスワードの確認: (**任意のパスワードを入力**)
 4. **ディスク** タブの項目では、以下の情報を入力します。入力後、[**次: ネットワーク**] ボタンをクリックします。
     * OS のディスクの種類: Standard HDD
 5. **ネットワーク** タブの項目では、以下の情報を入力します。入力後、[**確認および作成**] ボタンをクリックします。
-    * 仮想ネットワーク: vnet-jpe（新規作成）
+    * 仮想ネットワーク: jpevnet（新規作成）
+
+        ※仮想ネットワークを新規作成する際に、以下の情報を入力します。
         * アドレス範囲: 10.0.0.0/**16**
         * サブネット名: web
         * アドレス空間: 10.0.0.0/**24**
 6. **検証に成功しました** のメッセージが出力されたら、[**作成**] ボタンをクリックします。
-7. **デプロイが完了しました** のメッセージが出力されたら [**リソースに移動**] ボタンをクリックします。
+7. **デプロイが完了しました** のメッセージが出力されたら、[**リソースに移動**] ボタンをクリックします。
+8. Azure portal の上部のナビゲーション バーで [Cloud Shell] をクリックして、[PowerShell] を選択します。
 
-＊＊＊＊＊＊ IIS の有効化 ＊＊＊＊＊＊＊＊＊＊
+    ※ ストレージがマウントされていません のメッセージが表示された場合は、[**ストレージの作成**] をクリックします。
+9. 次のコマンドを実行して、IIS を仮想マシンにインストールします。
+ 
+    ※ 以下のコマンドの ResourceGroupName パラメーターをご自身の値に変更してから実行します。
 ```azurepowershell
  Set-AzVMExtension `
-  -ResourceGroupName myResourceGroupAG `
+  -ResourceGroupName xx-azurews `
   -ExtensionName IIS `
-  -VMName myVM `
+  -VMName WebVM01 `
   -Publisher Microsoft.Compute `
   -ExtensionType CustomScriptExtension `
   -TypeHandlerVersion 1.4 `
   -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
-  -Location EastUS
+  -Location JapanEast
 ```
-＊＊＊＊＊＊ IIS の有効化 ＊＊＊＊＊＊＊＊＊＊
 
 ## タスク 3: Azure Database for PostgreSQL へ接続する
 このタスクでは、Web サーバーにログインして、Azure Database for PostgreSQL へ接続確認を行います。
@@ -128,19 +136,20 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 
 
 ## タスク 4: リソース マネージャー テンプレートを使用して複数のリソースを一括で展開する
-このタスクでは、追加の Web サーバと、アプリケーション ゲートウェイを展開します。
+このタスクでは、追加の Web サーバとアプリケーション ゲートウェイを展開します。
 また、後半の演習で必要となる一部のリソースも一括で展開します。
 
-今回は、Azure の IaC (Infrastructure as a Code) ソリューションであるリソース マネージャー テンプレートを使用して作成します。
+今回は Azure の IaC (Infrastructure as a Code) ソリューションであるリソース マネージャー テンプレートを使用します。
 
-1. 以下の [**Deploy to Azure**] ボタンをクリックして、Azure ポータルを開き、Contoso アプリケーションの高可用性に必要となる、追加のインフラストラクチャを コンポーネントのテンプレート デプロイを起動します。プロンプトが表示された場合は、サブスクリプションの資格情報を使用して Azure ポータルにログインします。
+1. 以下の [**Deploy to Azure**] ボタンをクリックして Azure ポータルを開き、Contoso アプリケーションの高可用性に必要となる、追加のインフラストラクチャを コンポーネントのテンプレート デプロイを起動します。プロンプトが表示された場合は、サブスクリプションの資格情報を使用して Azure ポータルにログインします。
 
 [![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftamatsuxyz%2Fazurews%2Fmain%2FTemplates%2Fazuredeploy.json)
 
 2. **カスタム デプロイ**画面で、以下の情報を入力します。入力後、[**確認および作成**] ボタンをクリックします。
     * リソース グループ: **Prefix**-azurews (既存）
-    * 地域: 東日本
-＊＊＊＊＊＊ 具体的なテンプレートパラメーターの追加 ＊＊＊＊＊＊＊＊＊＊
+    * リージョン: 東日本
+    * Admin Username: azlabadmin
+    * Admin Password: (**任意のパスワードを入力**)
 3. リソースがデプロイされるのを待っている間、テンプレートの内容を確認してください。あなたは移動して、テンプレートを確認でき **Prefix**-azurews の選択、リソース・グループの展開リソースグループ内に続く、展開のいずれかを選択します。
 
 テンプレートには、必要なさまざまなリソースを含む、以下の 5 つの子テンプレートが含まれていることに注目してください。
@@ -185,8 +194,8 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
     * リソース: **Prefix**-psql
     * ターゲット サブリソース: postgresqlServer
 5. **構成**タブで以下の情報を入力します。入力後は、[**確認および作成**] をクリックします。
-    * 仮想ネットワーク: vnet-jpe
-    * サブネット: web ******************
+    * 仮想ネットワーク: jpevnet
+    * サブネット: web
     * プライベート DNS ゾーンとの統合: はい
     * プライベート DNS ゾーン: （新規）privatelink.postgres.database.azure.com
 6. **検証に成功しました** と表示されたら、 [**作成**] ボタンをクリックします。
