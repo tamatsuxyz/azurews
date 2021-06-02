@@ -128,7 +128,7 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 5. メッセージが表示されたら、[**接続**] をクリックし、仮想マシンの資格情報を入力してログインできることを確認します。 
 6. 以下の URL より PostgreSQL クライアントをダウンロードしてインストールします。
 
-　　※ Server Manager で IE のセキュリティ強化機能を事前に無効化が必要です。
+　　※ 事前に Server Manager で IE のセキュリティ強化機能の無効化が必要です。
 
 https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 
@@ -140,7 +140,8 @@ https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 8. コマンドプロンプトを開いて以下を実行します。
 
 ※ホスト名やユーザー名の @ 以降、ルート証明書（pem ファイル）のパスはご自身の環境に併せて変更してから実行してください。
-``` > C:\Program Files\PostgreSQL\13\bin\psql.exe "sslmode=verify-full sslrootcert=BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
+```azurepowershell
+> C:\Program Files\PostgreSQL\13\bin\psql.exe "sslmode=verify-full sslrootcert=BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
 
 > CREATE DATABASE mypgsqldb;
 > \c mypgsqldb
