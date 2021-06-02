@@ -132,9 +132,10 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
 
 https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 
-    ※ **Select Components** の画面では、Command Line Tools のみを選択して進めます。
+※ **Select Components** の画面では、Command Line Tools のみを選択して進めます。
 
 7. 以下の URL より Azure Database for PostgreSQL の接続に必要となるルート証明書を任意のフォルダーにダウンロードします。
+
 https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 
 8. コマンドプロンプトを開いて以下を実行します。
