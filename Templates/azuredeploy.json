@@ -31,9 +31,9 @@
                 "enableGen2": false,
                 "enableAcceleratedNetworking": false,
                 "location": "[variables('location')]",
-                "availabilitySetName": "avsWebVM",
+                "availabilitySetName": "false",
                 "zones":[]
-            }/*,
+            },
             {
                 "virtualMachineName": "WebVM11",
                 "VNetName": "jpwvnet",
@@ -43,7 +43,7 @@
                 "location": "[parameters('secondaryRegion')]",
                 "availabilitySetName": "false",
                 "zones":[]
-            }*/
+            }
         ],
         "FrontDoor": {
             "resourceName": "[concat('afd', substring(uniqueString(resourceGroup().id), 0, 4))]"

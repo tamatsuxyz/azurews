@@ -24,7 +24,7 @@ Contoso 社は、既存のオンプレミスのアプリケーションを Micro
 
 **ソリューション アーキテクチャ**
 ---
-以下の図は、このラボで構築するアプリケーション アーキテクチャを示しています。Web サーバー、PostgreSQL、だけから始めて、完全に冗長な高可用性環境を東日本リージョンに構築します。次に、この環境を西日本リージョンのセカンダリ サイトに拡張し、Web 層とデータベース層の両方に可用性ソリューションを追加します。
+以下の図は、このラボで構築するアプリケーション アーキテクチャを示しています。Web サーバー、PostgreSQL、だけから始めて、東日本リージョンに構築します。次に、この環境を西日本リージョンのセカンダリ サイトに拡張し、Web 層とデータベース層の両方に可用性ソリューションを追加します。
 
 ![SolutionOverview](https://raw.githubusercontent.com/tamatsuxyz/azurews/main/images/SolutionOverview.png)
 ---
@@ -105,16 +105,21 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
   -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
   -Location JapanEast
 ```
+
+　※コマンド実行が完了したら、[X] ボタンで Cloud Shell を閉じても問題ありません。
+
 10. WebVM01 を開き、[設定] - [ネットワーク] をクリックします。
 11. **受信ポートの規則を追加する** ボタンをクリックします。
 12. 以下の情報を入力し、[追加] ボタンをクリックします。
     * サービス: HTTP
     * アクション: 許可
     * 優先度: 100
-    * 名前: AllowHttpInbound
+    * 名前: AllowHttpInBound
 10. **NIC パブリック IP** に表示されているパブリック IP アドレスを Web ブラウザで開き、WebVM01 の文字のみが書かれた Web ページが表示されることを確認します。
 
 ※このパブリック IP は、後述の手順でも使用しますのでメモ張などに保存しておきます。
+
+※ネットワーク セキュリティ グループの設定反映に数十秒の時間がかかる場合があります。表示に失敗した場合は、時間をおいてからリロードして確認してください。
 
 ## タスク 3: Azure Database for PostgreSQL へ接続する
 このタスクでは、Web サーバーにログインして、Azure Database for PostgreSQL へ接続確認を行います。
@@ -143,7 +148,7 @@ https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 
 ※ホスト名やユーザー名の @ 以降、ルート証明書（pem ファイル）のパスはご自身の環境に併せて変更してから実行してください。
 ```azurepowershell
-> C:\Program Files\PostgreSQL\13\bin\psql.exe "sslmode=verify-full sslrootcert=BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
+> "C:\Program Files\PostgreSQL\13\bin\psql.exe" "sslmode=verify-full sslrootcert=c:\\work\\BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
 
 > CREATE DATABASE mypgsqldb;
 > \c mypgsqldb
@@ -160,10 +165,15 @@ https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 > INSERT INTO inventory (id, name, quantity) VALUES (2, 'orange', 154);
 
 > SELECT * FROM inventory;
+
+> quit
 ```
 
+9. コマンドプロンプトを終了し、サーバーからログアウトします。
+
+
 ## タスク 4: リソース マネージャー テンプレートを使用して複数のリソースを一括で展開する
-このタスクでは、追加の Web サーバとアプリケーション ゲートウェイを展開します。
+このタスクでは、追加の Web サーバを展開します。
 また、後半の演習で必要となる一部のリソースも一括で展開します。
 
 今回は Azure の IaC (Infrastructure as a Code) ソリューションであるリソース マネージャー テンプレートを使用します。
@@ -311,6 +321,8 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
 
 
 ## ラボのクリーンアップ: リソース グループを削除する
+
+
 1. [リソース グループ] を選択します。
 2. xx-azurews リソース グループを開きます。
 3. [リソース グループの削除] をクリックします。
