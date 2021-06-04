@@ -31,7 +31,7 @@
                 "location": "[variables('location')]",
                 "availabilitySetName": "false",
                 "zones": []
-            }/*,
+            },
             {
                 "virtualMachineName": "WebVM11",
                 "VNetName": "jpwvnet",
@@ -39,7 +39,7 @@
                 "location": "[parameters('secondaryRegion')]",
                 "availabilitySetName": "false",
                 "zones": []
-            }*/
+            }
         ],
         "FrontDoor": {
             "resourceName": "[concat('afd', substring(uniqueString(resourceGroup().id), 0, 4))]"
@@ -88,7 +88,7 @@
                 }
             }
         },
-/*        {
+        {
             "apiVersion": "2020-06-01",
             "name": "linked-ApplicationGateway",
             "type": "Microsoft.Resources/deployments",
@@ -115,7 +115,7 @@
                     }
                 }
             }
-        },*/
+        },
         {
             "apiVersion": "2020-06-01",
             "name": "[concat('linked-VM-', variables('VirtualMachine')[copyIndex()].virtualMachineName)]",
@@ -125,6 +125,7 @@
                 "count": "[length(variables('VirtualMachine'))]"
             },
             "dependsOn": [
+                "linked-ApplicationGateway",
                 "linked-VNet-jpwvnet"
             ],
             "properties": {
