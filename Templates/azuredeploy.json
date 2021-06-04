@@ -48,8 +48,7 @@
             "virtualNetwork": {
                 "jpevnet": {
                     "virtualNetwork": "10.0.0.0/16",
-                    "web": "10.0.0.0/24",
-                    "ApplicationGateway": "10.0.1.0/24"
+                    "web": "10.0.0.0/24"
                 },
                 "jpwvnet": {
                     "virtualNetwork": "10.2.0.0/16",
@@ -57,7 +56,6 @@
                 }
             },
             "resource": {
-                "ApplicationGatewayV2": "10.0.1.100"
             }
         }        
     },
@@ -90,34 +88,6 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "linked-ApplicationGateway",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/ApplicationGatewayV2.json')]"
-                },
-                "parameters": {
-                    "applicationGatewayName": {
-                        "value": "AppGW"
-                    },
-                    "skuSize": {
-                        "value": "WAF_v2"
-                    },
-                    "privateIpAddress": {
-                        "value": "[variables('ipAddress').resource.ApplicationGatewayV2]"
-                    },
-                    "subnetRef": {
-                        "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'jpevnet'), '/subnets/ApplicationGateway')]"
-                    },
-                    "zones": {
-                        "value": []
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-06-01",
             "name": "[concat('linked-VM-', variables('VirtualMachine')[copyIndex()].virtualMachineName)]",
             "type": "Microsoft.Resources/deployments",
             "copy": {
@@ -125,7 +95,6 @@
                 "count": "[length(variables('VirtualMachine'))]"
             },
             "dependsOn": [
-                "linked-ApplicationGateway",
                 "linked-VNet-jpwvnet"
             ],
             "properties": {

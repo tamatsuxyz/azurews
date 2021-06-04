@@ -66,11 +66,6 @@
     "availabilitySet": "[if( not(equals(parameters('availabilitySetName'), 'false')), variables('availabilitySetObject'), '' )]",
     "availabilitySetplatformFaultDomainCount": 2,
     "availabilitySetPlatformUpdateDomainCount": 20,
-    "evictionPolicy": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', 'Deallocate' )]",
-    "billingProfile": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', variables('billingProfileObject'))]",
-    "billingProfileObject": {
-      "maxPrice": -1
-    },
     "enableAcceleratedNetworking": false,
     "enableGen2": false,
     "imageSku": "[if(variables('enableGen2'), '2019-Datacenter-gensecond', '2019-Datacenter')]"
