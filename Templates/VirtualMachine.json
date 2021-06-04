@@ -66,7 +66,6 @@
     "availabilitySet": "[if( not(equals(parameters('availabilitySetName'), 'false')), variables('availabilitySetObject'), '' )]",
     "availabilitySetplatformFaultDomainCount": 2,
     "availabilitySetPlatformUpdateDomainCount": 20,
-    "priority": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', 'Spot' )]",
     "evictionPolicy": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', 'Deallocate' )]",
     "billingProfile": "[if( not(equals(parameters('availabilitySetName'), 'false')), '', variables('billingProfileObject'))]",
     "billingProfileObject": {
@@ -179,9 +178,6 @@
           }
         },
         "licenseType": "Windows_Server",
-        "priority": "[variables('priority')]",
-        "evictionPolicy": "[variables('evictionPolicy')]",
-        "billingProfile": "[variables('billingProfile')]",
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": false
