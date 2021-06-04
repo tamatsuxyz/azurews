@@ -137,8 +137,8 @@
       },
       "sku": {
         "name": "[variables('publicIpAddressSku')]"
-      },
-      "zones": "[parameters('zones')]"
+      }//,
+      //"zones": "[parameters('zones')]"
     },
     {
       "name": "[parameters('virtualMachineName')]",
