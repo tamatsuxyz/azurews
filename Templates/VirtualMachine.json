@@ -17,15 +17,9 @@
     "subnetRef": {
       "type": "string"
     },
-    "_artifactsLocation": {
-      "type": "string"
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]"
-    },
-    "enableAcceleratedNetworking": {
-      "type": "bool"
     },
     "availabilitySetName":{
       "type": "string",
@@ -34,10 +28,6 @@
     "zones":{
       "type": "array",
       "defaultValue": []
-    },
-    "enableGen2": {
-      "type": "bool",
-      "defaultValue": false
     }
   },
   "variables": {
@@ -82,7 +72,9 @@
     "billingProfileObject": {
       "maxPrice": -1
     },
-    "imageSku": "[if(parameters('enableGen2'), '2019-Datacenter-gensecond', '2019-Datacenter')]"
+    "enableAcceleratedNetworking": false,
+    "enableGen2": false,
+    "imageSku": "[if(variables('enableGen2'), '2019-Datacenter-gensecond', '2019-Datacenter')]"
   },
   "resources": [
     {
@@ -95,7 +87,7 @@
         "[resourceId('Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]"
       ],
       "properties": {
-        "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
+        "enableAcceleratedNetworking": "[variables('enableAcceleratedNetworking')]",
         "ipConfigurations": [
           {
             "name": "ipconfig1",
@@ -137,8 +129,8 @@
       },
       "sku": {
         "name": "[variables('publicIpAddressSku')]"
-      }//,
-      //"zones": "[parameters('zones')]"
+      },
+      "zones": "[parameters('zones')]"
     },
     {
       "name": "[parameters('virtualMachineName')]",

@@ -28,22 +28,18 @@
                 "virtualMachineName": "WebVM02",
                 "VNetName": "jpevnet",
                 "SubnetName": "web",
-                "enableGen2": false,
-                "enableAcceleratedNetworking": false,
                 "location": "[variables('location')]",
                 "availabilitySetName": "false",
                 "zones": []
-            },
+            }/*,
             {
                 "virtualMachineName": "WebVM11",
                 "VNetName": "jpwvnet",
                 "SubnetName": "web",
-                "enableGen2": false,
-                "enableAcceleratedNetworking": false,
                 "location": "[parameters('secondaryRegion')]",
                 "availabilitySetName": "false",
                 "zones": []
-            }
+            }*/
         ],
         "FrontDoor": {
             "resourceName": "[concat('afd', substring(uniqueString(resourceGroup().id), 0, 4))]"
@@ -137,14 +133,14 @@
                     "uri": "[concat(parameters('_artifactsLocation'), '/VirtualMachine.json')]"
                 },
                 "parameters": {
+                    "location": {
+                        "value": "[variables('VirtualMachine')[copyIndex()].location]"
+                    },
                     "virtualMachineName": {
                         "value": "[variables('VirtualMachine')[copyIndex()].virtualMachineName]"
                     },
                     "virtualMachineSize": {
                         "value": "[parameters('virtualMachineSize')]"
-                    },
-                    "enableGen2": {
-                        "value": "[variables('VirtualMachine')[copyIndex()].enableGen2]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
@@ -154,15 +150,6 @@
                     },
                     "subnetRef": {
                         "value": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('VirtualMachine')[copyIndex()].VNetName), '/subnets/', variables('VirtualMachine')[copyIndex()].SubnetName)]"
-                    },
-                    "enableAcceleratedNetworking": {
-                        "value": "[variables('VirtualMachine')[copyIndex()].enableAcceleratedNetworking]"
-                    },
-                    "_artifactsLocation": {
-                        "value": "[parameters('_artifactsLocation')]"
-                    },
-                    "location": {
-                        "value": "[variables('VirtualMachine')[copyIndex()].location]"
                     },
                     "availabilitySetName": {
                         "value": "[variables('VirtualMachine')[copyIndex()].availabilitySetName]"
