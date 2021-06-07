@@ -95,15 +95,15 @@ Contoso 社の業務アプリケーションは、2階層アーキテクチャ�
  
     ※ 以下のコマンドの ResourceGroupName パラメーターをご自身の値に変更してから実行します。
 ```azurepowershell
- Set-AzVMExtension `
-  -ResourceGroupName xx-azurews `
-  -ExtensionName IIS `
-  -VMName WebVM01 `
-  -Publisher Microsoft.Compute `
-  -ExtensionType CustomScriptExtension `
-  -TypeHandlerVersion 1.4 `
-  -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
-  -Location JapanEast
+Set-AzVMExtension `
+ -ResourceGroupName xx-azurews `
+ -ExtensionName IIS `
+ -VMName WebVM01 `
+ -Publisher Microsoft.Compute `
+ -ExtensionType CustomScriptExtension `
+ -TypeHandlerVersion 1.4 `
+ -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
+ -Location JapanEast
 ```
 
 　※東日本以外のリージョンを使用する場合、以下のコマンドレットを使用し、上述の -Location オプションの引数に指定するリージョン名を確認してください。
@@ -156,25 +156,25 @@ https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
 
 ※ホスト名やユーザー名の @ 以降、ルート証明書（pem ファイル）のパスはご自身の環境に併せて変更してから実行してください。
 ```azurepowershell
-> "C:\Program Files\PostgreSQL\13\bin\psql.exe" "sslmode=verify-full sslrootcert=c:\\work\\BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
+"C:\Program Files\PostgreSQL\13\bin\psql.exe" "sslmode=verify-full sslrootcert=c:\\work\\BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
 
-> CREATE DATABASE mypgsqldb;
-> \c mypgsqldb
+CREATE DATABASE mypgsqldb;
+\c mypgsqldb
 
-> CREATE TABLE inventory (
->    id serial PRIMARY KEY, 
->    name VARCHAR(50), 
->    quantity INTEGER
-> );
+CREATE TABLE inventory (
+   id serial PRIMARY KEY, 
+   name VARCHAR(50), 
+   quantity INTEGER
+);
 
-> \dt
+\dt
 
-> INSERT INTO inventory (id, name, quantity) VALUES (1, 'banana', 150); 
-> INSERT INTO inventory (id, name, quantity) VALUES (2, 'orange', 154);
+INSERT INTO inventory (id, name, quantity) VALUES (1, 'banana', 150); 
+INSERT INTO inventory (id, name, quantity) VALUES (2, 'orange', 154);
 
-> SELECT * FROM inventory;
+SELECT * FROM inventory;
 
-> quit
+quit
 ```
 
 9. コマンドプロンプトを終了し、サーバーからログアウトします。
@@ -210,27 +210,27 @@ https://www.digicert.com/CACerts/BaltimoreCyberTrustRoot.crt.pem
  
     ※ 以下のコマンドの ResourceGroupName パラメーターをご自身の値に変更してから実行します。
 ```azurepowershell
- Set-AzVMExtension `
-  -ResourceGroupName xx-azurews `
-  -ExtensionName IIS `
-  -VMName WebVM02 `
-  -Publisher Microsoft.Compute `
-  -ExtensionType CustomScriptExtension `
-  -TypeHandlerVersion 1.4 `
-  -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
-  -Location JapanEast
+Set-AzVMExtension `
+ -ResourceGroupName xx-azurews `
+ -ExtensionName IIS `
+ -VMName WebVM02 `
+ -Publisher Microsoft.Compute `
+ -ExtensionType CustomScriptExtension `
+ -TypeHandlerVersion 1.4 `
+ -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
+ -Location JapanEast
 ```
 
 ```azurepowershell
- Set-AzVMExtension `
-  -ResourceGroupName xx-azurews `
-  -ExtensionName IIS `
-  -VMName WebVM11 `
-  -Publisher Microsoft.Compute `
-  -ExtensionType CustomScriptExtension `
-  -TypeHandlerVersion 1.4 `
-  -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
-  -Location JapanWest
+Set-AzVMExtension `
+ -ResourceGroupName xx-azurews `
+ -ExtensionName IIS `
+ -VMName WebVM11 `
+ -Publisher Microsoft.Compute `
+ -ExtensionType CustomScriptExtension `
+ -TypeHandlerVersion 1.4 `
+ -SettingString '{"commandToExecute":"powershell Add-WindowsFeature Web-Server; powershell Add-Content -Path \"C:\\inetpub\\wwwroot\\Default.htm\" -Value $($env:computername)"}' `
+ -Location JapanWest
 ```
 
 
@@ -259,7 +259,7 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
 4. **リソース**タブで、以下の情報を入力します。入力後は、[次:構成] をクリックします。
     * リソースの種類: Microsoft.DBforPostgreSQL/servers
     * リソース: **Prefix**-jpepsql
-    * ターゲット サブリソース: postgresqlServer
+    * 対象 サブリソース: postgresqlServer
 5. **構成**タブで以下の情報を入力します。入力後は、[**確認および作成**] をクリックします。
     * 仮想ネットワーク: jpevnet
     * サブネット: web
@@ -271,12 +271,17 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
 9. コマンドプロンプトを開いて以下を実行します。
 
 ※ホスト名やユーザー名の @ 以降、ルート証明書（pem ファイル）のパスはご自身の環境に併せて変更してから実行してください。
-```
-> C:\Program Files\PostgreSQL\13\bin\psql.exe "sslmode=verify-full sslrootcert=BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=postgres user=azlabadmin@xx-jpepsql"
+```azurepowershell
+nslookup xx-jpepsql.privatelink.postgres.database.azure.com
+※名前解決の結果がプライベート IP アドレスであることを確認します。
 
-> \dt
+"C:\Program Files\PostgreSQL\13\bin\psql.exe" "sslmode=verify-full sslrootcert=C:\\Users\\azlabadmin\\Downloads\\BaltimoreCyberTrustRoot.crt.pem host=xx-jpepsql.postgres.database.azure.com dbname=mypgsqldb user=azlabadmin@xx-jpepsql"
 
-> SELECT * FROM inventory;
+\dt
+
+SELECT * FROM inventory;
+
+quit
 ```
 
 ## 演習 3: 可用性とスケーラビリティ
@@ -286,7 +291,7 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
 ## タスク 1  Azure Database for PostgreSQL をリージョン冗長構成変更にする
 
 1. プライマリ サーバーとして使用する既存の Azure Database for PostgreSQL サーバー (**Prefix**-jpepsql) を選択します。
-2. サーバー サイドバーで、 [設定] の [レプリケーション] を選択します。
+2. [設定] の [レプリケーション] を選択します。
 3. [＋レプリカの追加] を選択します。
 4. 以下の情報を入力します。入力後は、[**OK**] をクリックします。
     * サーバー名: **Prefix**-jpwpsql
@@ -315,7 +320,7 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
 * **リソース**タブで、以下の情報を入力します。
     * リソースの種類: Microsoft.DBforPostgreSQL/servers
     * リソース: **Prefix**-jpwpsql
-    * ターゲット サブリソース: postgresqlServer
+    * 対象 サブリソース: postgresqlServer
 * **構成**タブで以下の情報を入力します。
     * 仮想ネットワーク: jpwvnet
     * サブネット: web
@@ -324,7 +329,43 @@ Azure Database for PostgreSQL にプライベート エンドポイントを構�
 
 
 ## タスク 2: Web サーバーを Azure フロント ドアでリージョン冗長構成に変更する
+1. Azure ポータルの左上部にある [三] アイコンをクリックし、ポータル メニューを開き、[Virtual Machines] をクリックします。
+2. WebVM01/02/11 のパブリック IP アドレスをメモ張などに記録します。
+3. WebVM01 をクリックし、[概要] を表示します。
+4. パブリック IP アドレスに表示される IP アドレスのリンクをクリックします。
+5. [設定] - [構成] をクリックし、IP アドレスの割り当てを [静的] に変更した上で [保存] ボタンをクリックします。
 
+※ WebVM02/11 は、ARM テンプレートにより静的設定が既に実施されているため、手動での設定は不要です。
+
+6. Azure ポータル上部の検索欄に [front door] と入力し、[フロント ドア] を選択します。
+7. afdxxxxx (xxxxx 部分はランダムな文字列) を選択します。
+8. [設定] - [Front Door デザイナー] をクリックし、[backendpool] をクリックします。
+9. 以下の設定値に変更します。
+    * パス: /Default.htm
+    * Protocol: HTTP
+10. [バックエンド プールの更新] 画面で、[＋バックエンドの追加] をクリックし、以下の設定値を入力します。入力後、[追加] ボタンをクリックします。（VM 毎に同一の手順を繰り返します）
+
+WebVM01 用の設定値
+* バックエンド ホストの種類: カスタム ホスト
+* バックエンド ホスト名: (WebVM01 の IP アドレス)
+* 優先度: 1
+
+WebVM02 用の設定値
+* バックエンド ホストの種類: カスタム ホスト
+* バックエンド ホスト名: (WebVM02 の IP アドレス)
+* 優先度: 1
+
+WebVM11 用の設定値
+* バックエンド ホストの種類: カスタム ホスト
+* バックエンド ホスト名: (WebVM11 の IP アドレス)
+* 優先度: 2
+
+11. [バックエンド プールの更新] 画面で、[更新] ボタンをクリックします。
+12. [保存] ボタンをクリックします。
+13. 左メニューの [概要] をクリックし、フロントエンド ホスト欄の FQDN 名を確認します。
+14. 前述の手順で確認した FQDN を Web ブラウザに入力して、Web ページが表示されることを確認します。
+
+※前述の手順で設定したのと同様、VM 名のみが表示されるページが開きます。
 
 
 ## ラボのクリーンアップ: リソース グループを削除する

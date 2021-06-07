@@ -58,7 +58,7 @@
     "osDiskType": "Standard_LRS",
     "publicIpAddressName": "[concat(parameters('virtualMachineName'), '-ip')]",
     "publicIpAddressSku": "[if(greater(length(parameters('zones')),0), 'Standard', 'Basic')]",
-    "publicIpAddressType": "[if(greater(length(parameters('zones')),0), 'Static', 'Dynamic')]",
+    "publicIpAddressType": "Static",
     "networkSecurityGroupName": "[concat(parameters('virtualMachineName'), '-nsg')]",
     "availabilitySetObject": {
       "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"

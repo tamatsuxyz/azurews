@@ -16,7 +16,7 @@
     "frontendEndpointsName": "[concat(parameters('resourceName'), '-azurefd-net')]",
     "healthProbeSettingsName": "healthProbe",
     "loadBalancingSettingsname": "loadBalancing",
-    "backendPoolsAddress": "20.48.68.223",
+    "backendPoolsAddress": "www.contoso.com",
     "backendHostHeader": "[variables('backendPoolsAddress')]"
   },
   "resources": [
@@ -110,7 +110,7 @@
               "routeConfiguration": {
                 "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
                 "customForwardingPath": null,
-                "forwardingProtocol": "HttpsOnly",
+                "forwardingProtocol": "HttpOnly",
                 "backendPool": {
                   "id": "[concat(resourceId(resourceGroup().name, 'Microsoft.Network/frontdoors', parameters('resourceName')), '/backendPools/' , variables('backendPoolsName'))]"
                 },
