@@ -16,7 +16,7 @@
     "frontendEndpointsName": "[concat(parameters('resourceName'), '-azurefd-net')]",
     "healthProbeSettingsName": "healthProbe",
     "loadBalancingSettingsname": "loadBalancing",
-    "backendPoolsAddress": "www.contoso.com",
+    "backendPoolsAddress": "web.contoso.com",
     "backendHostHeader": "[variables('backendPoolsAddress')]"
   },
   "resources": [

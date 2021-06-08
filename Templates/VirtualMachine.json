@@ -35,9 +35,9 @@
     "networkInterfaceName": "[concat(parameters('virtualMachineName'), substring(uniqueString(resourceGroup().id), 0, 3))]",
     "networkSecurityGroupRules": [
       {
-        "name": "HTTP",
+        "name": "AllowHttpInBound",
         "properties": {
-          "priority": 400,
+          "priority": 100,
           "protocol": "TCP",
           "access": "Allow",
           "direction": "Inbound",
@@ -45,8 +45,7 @@
           "sourcePortRange": "*",
           "destinationAddressPrefix": "*",
           "destinationPortRanges": [
-            "80",
-            "443"
+            "80"
           ],
           "sourcePortRanges": [],
           "sourceAddressPrefixes": [],
