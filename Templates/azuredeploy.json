@@ -29,7 +29,7 @@
                 "VNetName": "jpevnet",
                 "SubnetName": "web",
                 "location": "[variables('location')]",
-                "availabilitySetName": "false",
+                "availabilitySetName": "avs-web",
                 "zones": []
             },
             {
